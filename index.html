@@ -10,6 +10,31 @@
     <h1>Video Info</h1>
     <form>
       <label>Select a video</label>
+      <input type="file" accept="video/*" />
+      <button type="submit">Get Info</button>
     </form>
+
+    <h1 id="result"></h1>
+
+    <script>
+      const electron = require('electron');
+      const { ipcRenderer } = electron;
+      // to communicate with electronjs side of this app from the browser
+      console.log('testing...');
+
+      document.querySelector('form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const { path } = document.querySelector('input').files[0];
+        console.log('Sending to electron.');
+
+        ipcRenderer.send('video:submit', path);
+        // name the event anything, and then the variable carrying the information to the electron side of the app
+      });
+
+      ipcRenderer.on('video:metadata', (event, duration) => {});
+      document.querySelector(
+        '#result'
+      ).innerHTML = `Video is ${duration} seconds`;
+    </script>
   </body>
 </html>
